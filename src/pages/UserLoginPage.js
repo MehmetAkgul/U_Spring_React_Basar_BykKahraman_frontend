@@ -28,14 +28,14 @@ class UserLoginPage extends React.Component {
         event.preventDefault();
         const {username, password} = this.state;
 
-        const body = {// eğer key va value anyı isimde ise sadece key yazılabilir.
+        const creds = {// eğer key va value anyı isimde ise sadece key yazılabilir.
             username,
-            password,
+            password
         }
 
         this.setState({pendingApiCall: true});
         try {
-            await login(body);
+            await login(creds);
         } catch (error) {
             if (error.response.data.validationErrors)
                 this.setState({errors: error.response.data.validationErrors});
