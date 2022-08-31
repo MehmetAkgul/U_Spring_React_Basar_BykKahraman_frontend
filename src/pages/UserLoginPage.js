@@ -1,29 +1,41 @@
 import React from "react";
 import {login} from "../api/apiCals";
 import Input from "../components/input";
+import buttonWithProgress from "../components/ButtonWithProgress";
 import {withTranslation} from "react-i18next";
-
+import axios from "axios";
+import ButtonWithProgress from "../components/ButtonWithProgress";
 
 class UserLoginPage extends React.Component {
 
     state = {
         username: null,
         password: null,
-        pendingApiCall: false,
-        errors: {},
+        error: null,
+        pendingApiCall: null,
     }
 
-    onChange = (event) => {
-        //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
-        const {name, value} = event.target; // Destructuring assignment
-        const errors = {...this.state.errors}
-        errors[name] = undefined;
-
-        this.setState({
-            [name]: value,
-            errors
+    componentDidMount() {
+        axios.interceptors.request.use((request) => {
+            this.setState({pendingApiCall: true});
+            return request;
         })
+        axios.interceptors.response.use(
+            response => {
+                this.setState({pendingApiCall: false});
+                return response;
+            },
+            error => {
+                this.setState({pendingApiCall: false});
+                throw  error;
+            })
     }
+
+    onChange = event => {
+        const {name, value} = event.target;
+        this.setState({[name]: value, error: null});
+    }
+
     onClickLogin = async event => {
         event.preventDefault();
         const {username, password} = this.state;
@@ -32,43 +44,36 @@ class UserLoginPage extends React.Component {
             username,
             password
         }
-
-        this.setState({pendingApiCall: true});
+        this.setState({error: null})
         try {
             await login(creds);
-        } catch (error) {
-            if (error.response.data.validationErrors)
-                this.setState({errors: error.response.data.validationErrors});
+        } catch (apiError) {
+            if (apiError.response.data.message)
+                this.setState({error: apiError.response.data.message});
         }
-        this.setState({pendingApiCall: false});
     }
 
 
     render() {
         const {t} = this.props;
-        const {pendingApiCall, errors} = this.state;
-        const {username, password} = errors;
+        const {username, password, error, pendingApiCall} = this.state;
+        const buttonEnabled = username && password;
         return (
             <div className="container">
                 <form action="src/pages/UserSignupPage">
                     <h1 className="text-center"> {t('Login')}</h1>
 
-                    <Input type="text" name="username" label={t('User Name')} error={username}
-                           onChange={this.onChange}/>
-                    <Input type="password" name="password" label={t('Password')} error={password}
-                           onChange={this.onChange}/>
-
+                    <Input type="text" name="username" label={t('User Name')} onChange={this.onChange}/>
+                    <Input type="password" name="password" label={t('Password')} onChange={this.onChange}/>
+                    {error && <div className="alert alert-danger">{error}</div>}
                     <div className="text-center">
-                        <button
-                            className="btn btn-primary mt-3"
+                        <ButtonWithProgress
                             onClick={this.onClickLogin}
-                            disabled={pendingApiCall}
-                        >
-                            {pendingApiCall && <span className="spinner-grow spinner-grow-sm"></span>}
-                            {t('Login')}
-                        </button>
+                            disabled={!buttonEnabled || pendingApiCall}
+                            pendingApiCall={pendingApiCall}
+                            text={t('Login')}
+                        />
                     </div>
-
                 </form>
             </div>
         )
