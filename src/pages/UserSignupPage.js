@@ -13,8 +13,7 @@ class UserSignupPage extends React.Component {
         displayName: null,
         password: null,
         passwordRepeat: null,
-        pendingApiCall: false,
-        errors: {},
+         errors: {},
     }
 
     onChange = (event) => {
@@ -48,21 +47,18 @@ class UserSignupPage extends React.Component {
             displayName,
             password,
         }
-
-        this.setState({pendingApiCall: true});
         try {
             await signup(body);
         } catch (error) {
             if (error.response.data.validationErrors)
                 this.setState({errors: error.response.data.validationErrors});
         }
-        this.setState({pendingApiCall: false});
     }
 
 
     render() {
-        const {t} = this.props;
-        const {pendingApiCall, errors} = this.state;
+        const {pendingApiCall, t} = this.props;
+        const {errors} = this.state;
         const {username, displayName, password, passwordRepeat} = errors;
         return (
             <div className="container">
