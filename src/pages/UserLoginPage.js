@@ -5,6 +5,7 @@ import buttonWithProgress from "../components/ButtonWithProgress";
 import {withTranslation} from "react-i18next";
 import axios from "axios";
 import ButtonWithProgress from "../components/ButtonWithProgress";
+import {withApiProgress} from "../shared/ApiProgress";
 
 class UserLoginPage extends React.Component {
 
@@ -67,5 +68,5 @@ class UserLoginPage extends React.Component {
 
 //bu işleme  "higher order component"
 const UserSignupPageWithTranslation = withTranslation()(UserLoginPage)
-
-export default UserSignupPageWithTranslation;
+const UserSignupPageWithApiProgress=withApiProgress(UserSignupPageWithTranslation)
+export default UserSignupPageWithApiProgress;
