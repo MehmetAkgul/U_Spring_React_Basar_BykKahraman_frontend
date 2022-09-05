@@ -8,7 +8,6 @@ import UserPage from "../pages/UserPage";
 import {HashRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import TabBar from "../components/TabBar";
 
-
 class App extends React.Component {
     state = {
         isLoggedIn: false,
@@ -35,7 +34,7 @@ class App extends React.Component {
 
         return (
 
-            <div className="row">
+            <div >
                 <Router>
                     <TabBar isLoggedIn={isLoggedIn} username={username} onLogoutSuccess={this.onLogoutSuccess}/>
                     <Switch>
@@ -47,7 +46,10 @@ class App extends React.Component {
                             }}/>
                         }
                         <Route path="/signup" component={UserSignupPage}/>
-                        <Route path="/user/:username" component={UserPage}/>
+                        <Route path="/user/:username"
+                               component={(props) => {
+                                   return <UserPage {...props} username={username}/>
+                               }}/>
                         <Redirect to="/"/>
                     </Switch>
                 </Router>
