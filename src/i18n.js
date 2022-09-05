@@ -7,6 +7,7 @@ i18next.use(initReactI18next).init({
             translations: {
                 'Sign Up': 'Sign Up',
                 'Login': 'Login',
+                'Logout': 'Logout',
                 'Password mismatch': 'Password mismatch',
                 'User Name': 'User Name',
                 'Display Name': 'Display Name',
@@ -18,6 +19,7 @@ i18next.use(initReactI18next).init({
             translations: {
                 'Sign Up': 'Kayıt Ol',
                 'Login': 'Giriş Yap',
+                'Logout': 'Çıkış Yap',
                 'Password mismatch': 'Aynı Şifreyi Giriniz',
                 'User Name': 'Kullanıcı Adı',
                 'Display Name': 'Tercih Edilen İsim',

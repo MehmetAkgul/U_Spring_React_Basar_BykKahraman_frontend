@@ -6,6 +6,7 @@ import {withTranslation} from "react-i18next";
 import axios from "axios";
 import ButtonWithProgress from "../components/ButtonWithProgress";
 import {withApiProgress} from "../shared/ApiProgress";
+import {use} from "i18next";
 
 class UserLoginPage extends React.Component {
 
@@ -25,7 +26,8 @@ class UserLoginPage extends React.Component {
     onClickLogin = async event => {
         event.preventDefault();
         const {username, password} = this.state;
-
+        const {push} = this.props.history;
+        const {onLoginSuccess} = this.props;
         const creds = {// eğer key va value anyı isimde ise sadece key yazılabilir.
             username,
             password
@@ -33,6 +35,9 @@ class UserLoginPage extends React.Component {
         this.setState({error: null})
         try {
             await login(creds);
+            // redirect to "/" if successful
+            onLoginSuccess(username)
+            push('/');
         } catch (apiError) {
             if (apiError.response.data.message)
                 this.setState({error: apiError.response.data.message});
@@ -41,7 +46,7 @@ class UserLoginPage extends React.Component {
 
 
     render() {
-        const {t,pendingApiCall} = this.props;
+        const {t, pendingApiCall} = this.props;
         const {username, password, error} = this.state;
         const buttonEnabled = username && password;
         return (
@@ -68,5 +73,5 @@ class UserLoginPage extends React.Component {
 
 //bu işleme  "higher order component"
 const UserSignupPageWithTranslation = withTranslation()(UserLoginPage)
-const UserSignupPageWithApiProgress=withApiProgress(UserSignupPageWithTranslation)
+const UserSignupPageWithApiProgress = withApiProgress(UserSignupPageWithTranslation)
 export default UserSignupPageWithApiProgress;

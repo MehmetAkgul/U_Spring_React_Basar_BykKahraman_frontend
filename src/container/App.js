@@ -5,26 +5,56 @@ import LanguageSelector from "../components/LanguageSelector";
 import UserLoginPage from "../pages/UserLoginPage";
 import HomePage from "../pages/HomePage";
 import UserPage from "../pages/UserPage";
-import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
+import {HashRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import TabBar from "../components/TabBar";
 
 
-function App() {
-    return (
-        <div className="row">
-            <Router>
-                <TabBar />
-               <Switch>
-                   <Route exact path="/" component={HomePage}/>
-                   <Route path="/login" component={UserLoginPage}/>
-                   <Route path="/signup" component={UserSignupPage}/>
-                   <Route path="/user/:username" component={UserPage}/>
-                   <Redirect to="/"/>
-               </Switch>
-            </Router>
-            <LanguageSelector/>
-        </div>
-    );
+class App extends React.Component {
+    state = {
+        isLoggedIn: false,
+        username: undefined,
+    };
+    onLoginSuccess = (username) => {
+        this.setState({
+            username,
+            isLoggedIn: true,
+        })
+    };
+    onLogoutSuccess = () => {
+        this.setState(
+            {
+                isLoggedIn: false,
+                username: undefined,
+            }
+        )
+    }
+
+    render() {
+
+        const {isLoggedIn, username} = this.state;
+
+        return (
+
+            <div className="row">
+                <Router>
+                    <TabBar isLoggedIn={isLoggedIn} username={username} onLogoutSuccess={this.onLogoutSuccess}/>
+                    <Switch>
+                        <Route exact path="/" component={HomePage}/>
+                        {
+                            !isLoggedIn &&
+                            <Route path="/login" component={(props) => {
+                                return <UserLoginPage {...props} onLoginSuccess={this.onLoginSuccess}/>
+                            }}/>
+                        }
+                        <Route path="/signup" component={UserSignupPage}/>
+                        <Route path="/user/:username" component={UserPage}/>
+                        <Redirect to="/"/>
+                    </Switch>
+                </Router>
+                <LanguageSelector/>
+            </div>
+        );
+    }
 }
 
 export default App;
