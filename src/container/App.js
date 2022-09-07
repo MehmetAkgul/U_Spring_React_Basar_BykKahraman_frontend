@@ -5,11 +5,9 @@ import UserLoginPage from "../pages/UserLoginPage";
 import HomePage from "../pages/HomePage";
 import UserPage from "../pages/UserPage";
 import {HashRouter as Router, Redirect, Route, Switch} from "react-router-dom";
-import TabBar from "../components/TabBar";
-import {Authentication} from "../shared/AuthenticationContext";
+import TabBar from "../components/TopBar";
 
 class App extends React.Component {
-    //static contextType=Authentication;
 
     render() {
        let isLoggedIn=false;

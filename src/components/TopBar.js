@@ -3,15 +3,23 @@ import logo from '../assets/logo192.png'
 import {Link} from "react-router-dom";
 import {withTranslation} from "react-i18next";
 import {Authentication} from "../shared/AuthenticationContext";
+import {connect} from "react-redux";
+import {mapStateToPropsFactory} from "react-redux/es/connect/mapStateToProps";
 
-class TabBar extends Component {
+class TopBar extends Component {
 //static contextType=Authentication;
+    onClickLogout = () => {
+        const action={
+            type:"logout-success"
+        }
+        this.props.dispatch(action);
+    }
 
     render() {
-        const {t} = this.props;
-        const  onLogoutSuccess=()=>{}
-        const isLoggedIn = false;
-        const username = false;
+        console.log(this.props)
+        const {t, username, isLoggedIn} = this.props;
+
+
         let links = (
             <ul className="navbar-nav ">
                 <li className="nav-item"><Link className="nav-link" to="/login">{t('Login')}</Link></li>
@@ -23,7 +31,7 @@ class TabBar extends Component {
             links = (
                 <ul className="navbar-nav ">
                     <li className="nav-item"><Link className="nav-link" to={`/user/${username}`}>{username}</Link></li>
-                    <li className="nav-item nav-link" onClick={onLogoutSuccess}
+                    <li className="nav-item nav-link" onClick={this.onClickLogout}
                         style={{cursor: "pointer"}}>{t('Logout')} </li>
                 </ul>
             );
@@ -43,4 +51,13 @@ class TabBar extends Component {
     }
 }
 
-export default withTranslation()(TabBar);
+const TopBarWithTranslation = withTranslation()(TopBar)
+
+const mapStateToProps = (store) => {
+    return {
+        username: store.username,
+        isLoggedIn: store.isLoggedIn
+    }
+}
+
+export default connect(mapStateToProps)(TopBarWithTranslation);
