@@ -5,19 +5,13 @@ import {withTranslation} from "react-i18next";
 import {Authentication} from "../shared/AuthenticationContext";
 import {connect} from "react-redux";
 import {mapStateToPropsFactory} from "react-redux/es/connect/mapStateToProps";
+import {logoutSuccess} from "../redux/autActions";
+import {mapDispatchToPropsFactory} from "react-redux/es/connect/mapDispatchToProps";
 
 class TopBar extends Component {
-//static contextType=Authentication;
-    onClickLogout = () => {
-        const action={
-            type:"logout-success"
-        }
-        this.props.dispatch(action);
-    }
-
     render() {
         console.log(this.props)
-        const {t, username, isLoggedIn} = this.props;
+        const {t, username, isLoggedIn, onLogoutSuccess} = this.props;
 
 
         let links = (
@@ -31,7 +25,7 @@ class TopBar extends Component {
             links = (
                 <ul className="navbar-nav ">
                     <li className="nav-item"><Link className="nav-link" to={`/user/${username}`}>{username}</Link></li>
-                    <li className="nav-item nav-link" onClick={this.onClickLogout}
+                    <li className="nav-item nav-link" onClick={onLogoutSuccess}
                         style={{cursor: "pointer"}}>{t('Logout')} </li>
                 </ul>
             );
@@ -57,7 +51,12 @@ const mapStateToProps = (store) => {
     return {
         username: store.username,
         isLoggedIn: store.isLoggedIn
-    }
-}
+    };
+};
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onLogoutSuccess: () => dispatch(logoutSuccess())
+    };
+};
 
-export default connect(mapStateToProps)(TopBarWithTranslation);
+export default connect(mapStateToProps, mapDispatchToProps)(TopBarWithTranslation);
