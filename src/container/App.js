@@ -6,11 +6,12 @@ import HomePage from "../pages/HomePage";
 import UserPage from "../pages/UserPage";
 import {HashRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import TabBar from "../components/TopBar";
+import {connect} from "react-redux";
 
 class App extends React.Component {
 
     render() {
-       let isLoggedIn=false;
+       const {isLoggedIn}=this.props;
         return (
             <div >
                 <Router>
@@ -29,4 +30,9 @@ class App extends React.Component {
     }
 }
 
-export default App;
+const mapStateToProps = (store) => {
+  return{
+      isLoggedIn:store.isLoggedIn
+  }
+}
+export default connect(mapStateToProps)(App);
