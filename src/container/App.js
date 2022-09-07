@@ -1,55 +1,27 @@
 import React from "react";
-import ApiProgress from "../shared/ApiProgress";
-import UserSignupPage from "../pages/UserSignupPage";
 import LanguageSelector from "../components/LanguageSelector";
+import UserSignupPage from "../pages/UserSignupPage";
 import UserLoginPage from "../pages/UserLoginPage";
 import HomePage from "../pages/HomePage";
 import UserPage from "../pages/UserPage";
 import {HashRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import TabBar from "../components/TabBar";
+import {Authentication} from "../shared/AuthenticationContext";
 
 class App extends React.Component {
-    state = {
-        isLoggedIn: false,
-        username: undefined,
-    };
-    onLoginSuccess = (username) => {
-        this.setState({
-            username,
-            isLoggedIn: true,
-        })
-    };
-    onLogoutSuccess = () => {
-        this.setState(
-            {
-                isLoggedIn: false,
-                username: undefined,
-            }
-        )
-    }
+    //static contextType=Authentication;
 
     render() {
-
-        const {isLoggedIn, username} = this.state;
-
+       let isLoggedIn=false;
         return (
-
             <div >
                 <Router>
-                    <TabBar isLoggedIn={isLoggedIn} username={username} onLogoutSuccess={this.onLogoutSuccess}/>
+                    <TabBar/>
                     <Switch>
                         <Route exact path="/" component={HomePage}/>
-                        {
-                            !isLoggedIn &&
-                            <Route path="/login" component={(props) => {
-                                return <UserLoginPage {...props} onLoginSuccess={this.onLoginSuccess}/>
-                            }}/>
-                        }
+                        { !isLoggedIn &&  <Route path="/login" component={ UserLoginPage}/>  }
                         <Route path="/signup" component={UserSignupPage}/>
-                        <Route path="/user/:username"
-                               component={(props) => {
-                                   return <UserPage {...props} username={username}/>
-                               }}/>
+                        <Route path="/user/:username"  component={UserPage}/>
                         <Redirect to="/"/>
                     </Switch>
                 </Router>

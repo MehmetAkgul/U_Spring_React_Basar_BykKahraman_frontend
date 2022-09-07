@@ -7,9 +7,10 @@ import axios from "axios";
 import ButtonWithProgress from "../components/ButtonWithProgress";
 import {withApiProgress} from "../shared/ApiProgress";
 import {use} from "i18next";
+import {Authentication} from "../shared/AuthenticationContext";
 
 class UserLoginPage extends React.Component {
-
+   // static contextType = Authentication;
     state = {
         username: null,
         password: null,
@@ -27,17 +28,22 @@ class UserLoginPage extends React.Component {
         event.preventDefault();
         const {username, password} = this.state;
         const {push} = this.props.history;
-        const {onLoginSuccess} = this.props;
+        const onLoginSuccess=()=>{};
         const creds = {// eğer key va value anyı isimde ise sadece key yazılabilir.
             username,
             password
         }
         this.setState({error: null})
         try {
-            await login(creds);
+            const response=await login(creds);
             // redirect to "/" if successful
             onLoginSuccess(username)
             push('/');
+
+            const authState = {
+                ...response.data,
+                password
+            }
         } catch (apiError) {
             if (apiError.response.data.message)
                 this.setState({error: apiError.response.data.message});

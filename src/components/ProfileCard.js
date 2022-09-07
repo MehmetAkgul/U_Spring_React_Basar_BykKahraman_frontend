@@ -1,13 +1,12 @@
 import React from 'react';
 import {withRouter} from "react-router-dom";
-import {composeInitialProps} from "react-i18next";
 
 
 const ProfileCard = props => {
     const pathUsername = props.match.params.username
-    const loggedInUsername = props.username;
+    const loggedInUsername = value.state.username;
     let message = "We cannot edit.";
-    if (loggedInUsername === pathUsername)
+    if (pathUsername===loggedInUsername)
         message = "we can edit";
     return (
         <div className="container">
