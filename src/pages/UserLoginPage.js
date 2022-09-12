@@ -1,11 +1,10 @@
 import React from "react";
-import {login} from "../api/apiCals";
 import Input from "../components/input";
 import {withTranslation} from "react-i18next";
 import ButtonWithProgress from "../components/ButtonWithProgress";
 import {withApiProgress} from "../shared/ApiProgress";
 import {connect} from "react-redux";
-import {loginSuccess} from "../redux/autActions";
+import {loginHandler} from "../redux/autActions";
 
 class UserLoginPage extends React.Component {
     state = {
@@ -22,25 +21,17 @@ class UserLoginPage extends React.Component {
     onClickLogin = async event => {
         event.preventDefault();
         const {username, password} = this.state;
-        const {push} = this.props.history;
-        const onLoginSuccess = () => {
-        };
+        const {history, dispatch} = this.props;
+        const {push} = history;
+
         const creds = {// eğer key va value anyı isimde ise sadece key yazılabilir.
             username,
             password
         }
         this.setState({error: null})
         try {
-            const response = await login(creds);
-            const authState = {
-                ...response.data,
-                password
-            }
-
-            this.props.onLoginSuccess(authState)
-            push('/');
-
-
+            await dispatch(loginHandler(creds));
+            push('/');// yönlendirme yapıyor
         } catch (apiError) {
             if (apiError.response.data.message)
                 this.setState({error: apiError.response.data.message});
@@ -56,7 +47,6 @@ class UserLoginPage extends React.Component {
             <div className="container">
                 <form action="src/pages/UserSignupPage">
                     <h1 className="text-center"> {t('Login')}</h1>
-
                     <Input type="text" name="username" label={t('User Name')} onChange={this.onChange}/>
                     <Input type="password" name="password" label={t('Password')} onChange={this.onChange}/>
                     {error && <div className="alert alert-danger">{error}</div>}
@@ -77,9 +67,5 @@ class UserLoginPage extends React.Component {
 //bu işleme  "higher order component"
 const UserSignupPageWithTranslation = withTranslation()(UserLoginPage)
 const UserSignupPageWithApiProgress = withApiProgress(UserSignupPageWithTranslation, "/api/1.0/auth")
-const mapDispatchToProps = (dispatch) => {
-    return {
-        onLoginSuccess: (authState) => dispatch(loginSuccess(authState))
-    };
-}
-export default connect(null, mapDispatchToProps)(UserSignupPageWithApiProgress);
+
+export default connect()(UserSignupPageWithApiProgress);
