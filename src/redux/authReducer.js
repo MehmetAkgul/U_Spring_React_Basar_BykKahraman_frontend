@@ -9,15 +9,23 @@ const defaultState = {
 };
 
 
-const authReducer = (state={...defaultState}, action) => {
-    if (action.type === ACTIONS.LOGOUT_SUCCESS)
-        return defaultState;
-    if (action.type === ACTIONS.LOGIN_SUCCESS)
-        return{
-            ...action.payload,
-            isLoggedIn: true,
-        };
-    return state;
+const authReducer = (state = {...defaultState}, action) => {
+
+    switch (action.type) {
+        case ACTIONS.LOGOUT_SUCCESS: {
+            return defaultState;
+        }
+        case  ACTIONS.LOGIN_SUCCESS: {
+
+            return {
+                ...action.payload,
+                isLoggedIn: true,
+            };
+        }
+        default: {
+            return state;
+        }
+    }
 };
 
 export default authReducer;
